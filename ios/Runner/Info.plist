@@ -2,6 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
+NSLocationWhenInUseUsageDescription
+
+ <!-- Foreground Location Access -->
+  <key>NSLocationWhenInUseUsageDescription</key>
+  <string>Your location is used to show accurate weather data for your area.</string>
+
+  <!-- Background Location Access -->
+  <key>NSLocationAlwaysUsageDescription</key>
+  <string>Allowing background location access helps us send real-time weather alerts and updates.</string>
+
+
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

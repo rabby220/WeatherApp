@@ -24,13 +24,16 @@ class AppText {
   static const String percentageText = "%";
   static const String fahrenheitDegreeSymbolText = "\u2109";
 
-
   ///Build a text style
   static TextStyle nameWithCountryTextStyle = GoogleFonts.sairaCondensed(
     fontSize: 25.0,
     color: AppColor.whiteColor,
   );
 
+  static TextStyle lightNameWithCountryTextStyle = GoogleFonts.sairaCondensed(
+    fontSize: 25.0,
+    color: AppColor.blackColor,
+  );
 
   ///Build a text style
   static TextStyle degreeTextStyle = GoogleFonts.lilitaOne(

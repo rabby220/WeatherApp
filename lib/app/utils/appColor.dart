@@ -9,6 +9,6 @@ class AppColor {
   static Color indigoColor = Colors.indigo;
   static Color purpleColor = Colors.purple;
   static Color whiteColor = Colors.white;
-  static Color mediumGrayColor = Color(0xff999999);
-  static Color blackColor = Color(0xff000000);
+  static Color mediumGrayColor = const Color(0xff999999);
+  static Color blackColor = const Color(0xff000000);
 }
