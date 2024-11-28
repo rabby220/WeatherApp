@@ -30,6 +30,12 @@ class AppText {
     color: AppColor.whiteColor,
   );
 
+  static TextStyle nameWithCountryTextStyle1 = GoogleFonts.sairaCondensed(
+    fontSize: 30.0,
+    fontWeight: FontWeight.bold,
+    color: AppColor.blackColor,
+  );
+
   static TextStyle lightNameWithCountryTextStyle = GoogleFonts.sairaCondensed(
     fontSize: 25.0,
     color: AppColor.blackColor,

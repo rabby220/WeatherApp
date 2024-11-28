@@ -5,7 +5,7 @@ class CustomSwitchTheme {
   CustomSwitchTheme._();
 
   ///Light Switch theme
-  static SwitchThemeData lightSwitchTheme = SwitchThemeData().copyWith(
+  static SwitchThemeData lightSwitchTheme = const SwitchThemeData().copyWith(
     splashRadius: 15.0,
     thumbColor: WidgetStatePropertyAll(
       AppColor.blueColor,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:horizontal_list_view/horizontal_list_view.dart';
 import 'package:intl/intl.dart';
-import 'package:weather_app/app/data/model/forecastWeatherModel.dart';
+import 'package:weather_app/app/data/model/weatherModel.dart';
 import 'package:weather_app/app/widgets/text.dart';
 import 'package:weather_app/app/widgets/tooltip.dart';
 
@@ -10,7 +10,7 @@ import '../utils/appIcon.dart';
 import '../utils/appText.dart';
 
 class HourlyWeatherView extends StatelessWidget {
-  final ForecastWeatherModel? forecastWeatherModel;
+  final WeatherModel? forecastWeatherModel;
   const HourlyWeatherView({super.key, this.forecastWeatherModel});
 
   @override
@@ -48,10 +48,14 @@ class HourlyWeatherView extends StatelessWidget {
 
                 //Hourly Image Icon
                 Expanded(
-                  child: Image.network(
-                    "http:${hourlyWeather?.condition?.icon.toString() ?? ""}",
-                    width: 70,
-                    height: 70,
+                  child: CircleAvatar(
+                    maxRadius: 22,
+                    backgroundColor: AppColor.blueColor,
+                    child: Image.network(
+                      "http:${hourlyWeather?.condition?.icon.toString() ?? ""}",
+                      width: 70,
+                      height: 70,
+                    ),
                   ),
                 ),
 

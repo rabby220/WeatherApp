@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_weather_bg_null_safety/flutter_weather_bg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:weather_app/app/data/model/weatherModel.dart';
 import 'package:weather_app/app/utils/appColor.dart';
 import 'package:weather_app/app/utils/appText.dart';
 
 import '../controllers/dashBoard_controller.dart';
-import '../data/model/forecastWeatherModel.dart';
 import '../services/loadingIndicator.dart';
 import '../utils/appIcon.dart';
+import '../widgets/forecastWeather.dart';
 import '../widgets/hourly_weather.dart';
 import '../widgets/searchWithLocation.dart';
 import '../widgets/text.dart';
@@ -35,79 +36,85 @@ Widget _buildForecastWeatherData({
 }) {
   return Obx(
     () => FutureBuilder(
-      future: controller.fetchForeCastWeather(
+      future: controller.fetchWeather(
         searchCity: controller.searchCity.value,
       ),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          ForecastWeatherModel? forecastWeatherModel = snapshot.data;
+          WeatherModel? weatherModel = snapshot.data;
           return Stack(
             children: [
               WeatherBg(
-                weatherType: controller
-                    .getWeatherBackground(forecastWeatherModel?.current),
+                weatherType:
+                    controller.getWeatherBackground(weatherModel?.current),
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
               ),
 
-              ///search Icon and Location On Icon Here with Alert Box when user search any location..
-              ///
-              ///
-              SearchWithLocation(
-                forecastWeatherModel: forecastWeatherModel,
-              ),
-
-              ///
-              ///
-              ///
               ///
               Column(
                 children: [
+                  ///search Icon and Location On Icon Here with Alert Box when user search any location..
+                  ///
+                  ///
+                  ///
+                  Expanded(
+                    flex: 1,
+                    child: SearchWithLocation(
+                      weatherModel: weatherModel,
+                    ),
+                  ),
+
+                  //
+                  //
                   //City Name and Country Name Here
                   Expanded(
-                    flex: 2,
+                    flex: 1,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        ///
+                        ///
+                        ///
                         ///City Name
                         TextWidget.buildTextWidget(
                             text:
-                                "${forecastWeatherModel?.location?.name?.toString() ?? ""}, ",
-                            textStyle: AppText.nameWithCountryTextStyle),
+                                "${weatherModel?.location?.name?.toString() ?? ""}, ",
+                            textStyle: AppText.nameWithCountryTextStyle1),
 
                         ///Country Name
+                        ///
+                        ///
                         TextWidget.buildTextWidget(
-                            text: forecastWeatherModel?.location?.country
-                                    ?.toString() ??
+                            text: weatherModel?.location?.country?.toString() ??
                                 "",
-                            textStyle: AppText.nameWithCountryTextStyle),
+                            textStyle: AppText.nameWithCountryTextStyle1),
                       ],
                     ),
                   ),
 
                   //
                   Expanded(
-                    flex: 3,
+                    flex: 4,
                     child: Column(
                       children: [
                         /// Current Temperature
                         Obx(
                           () => TextWidget.buildTextWidget(
-                              text: "${controller.temp.value}",
+                              text: controller.temp.value,
                               textStyle: AppText.degreeTextStyle),
                         ),
 
                         ///Time
                         TextWidget.buildTextWidget(
                             text: DateFormat.MMMEd().format(DateTime.parse(
-                                forecastWeatherModel?.location?.localtime
-                                        ?.toString() ??
+                                weatherModel?.location?.localtime?.toString() ??
                                     "")),
                             textStyle: AppText.nameWithCountryTextStyle),
 
                         ///Condition of Current Weather
                         TextWidget.buildTextWidget(
-                            text: forecastWeatherModel?.current?.condition!.text
+                            text: weatherModel?.current?.condition!.text
                                     .toString() ??
                                 "",
                             textStyle: AppText.nameWithCountryTextStyle),
@@ -126,7 +133,7 @@ Widget _buildForecastWeatherData({
                               iconSize: 25.0,
                               icon: AppIcon.humidityIcon,
                               text:
-                                  "${forecastWeatherModel?.current?.humidity?.toString() ?? ""}${AppText.percentageText}"),
+                                  "${weatherModel?.current?.humidity?.toString() ?? ""}${AppText.percentageText}"),
                         ),
                         ToolTipWidget.buildToolTip(
                           toolMessage: 'Wind',
@@ -135,7 +142,7 @@ Widget _buildForecastWeatherData({
                               iconSize: 25.0,
                               icon: AppIcon.windSpeedIcon,
                               text:
-                                  "${forecastWeatherModel?.current?.windKph.toString() ?? ""} ${AppText.kiloMeterPerHourText}"),
+                                  "${weatherModel?.current?.windKph.toString() ?? ""} ${AppText.kiloMeterPerHourText}"),
                         ),
                         ToolTipWidget.buildToolTip(
                           toolMessage: 'Feels Like',
@@ -144,9 +151,24 @@ Widget _buildForecastWeatherData({
                               iconSize: 25.0,
                               icon: AppIcon.feelsLikeIcon,
                               text:
-                                  "${forecastWeatherModel?.current?.feelslikeC.toString() ?? ""} ${AppText.celsiusDegreeSymbolText}"),
+                                  "${weatherModel?.current?.feelslikeC.toString() ?? ""} ${AppText.celsiusDegreeSymbolText}"),
                         ),
                       ],
+                    ),
+                  ),
+
+                  Expanded(
+                    flex: 1,
+                    child: TextButton(
+                      onPressed: () {
+                        Get.to(
+                          () => ForecastWeather(forecastWeather: weatherModel),
+                        );
+                      },
+                      child: Text(
+                        'See Forecast',
+                        style: AppText.nameWithCountryTextStyle,
+                      ),
                     ),
                   ),
 
@@ -156,8 +178,8 @@ Widget _buildForecastWeatherData({
                   ///
                   Expanded(
                     flex: 2,
-                    child: HourlyWeatherView(
-                        forecastWeatherModel: forecastWeatherModel),
+                    child:
+                        HourlyWeatherView(forecastWeatherModel: weatherModel),
                   ),
                 ],
               ),

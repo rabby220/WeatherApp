@@ -6,53 +6,70 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:weather_app/app/data/constant/constant.dart';
-import 'package:weather_app/app/data/model/forecastWeatherModel.dart';
+import 'package:weather_app/app/data/model/weatherModel.dart';
 import 'package:weather_app/app/utils/appText.dart';
 
 import '../services/errorMessage.dart';
 
 class DashBoardController extends GetxController {
+  //
+  // Set initial temp based on saved preference
+  //
   @override
   void onInit() {
     super.onInit();
-
     bool isFahrenheit =
         Hive.box('PeopleBox').get('switchValue', defaultValue: false);
-    fetchForeCastWeather(searchCity: searchCity.value).then((forecast) {
-      updateTemperatureUnit(
-          isFahrenheit, forecast); // Set initial temp based on saved preference
-    });
+    fetchWeather(searchCity: searchCity.value).then(
+      (forecast) {
+        updateTemperatureUnit(
+          isFahrenheit,
+          forecast,
+        );
+      },
+    );
   }
 
+  //Search controller
   final TextEditingController searchCityController = TextEditingController();
 
-  RxString searchCity = "auto:ip".obs; // Observable variable for City
-  RxString temp = ''.obs; // Observable variable for temperature
+  // variable for City
+  RxString searchCity = "auto:ip".obs;
 
-  void updateTemperatureUnit(
-      bool isFahrenheit, ForecastWeatherModel? forecast) {
-    if (forecast == null) return; // Safety check
+  //  variable for temperature
+  RxString temp = ''.obs;
+
+  void updateTemperatureUnit(bool isFahrenheit, WeatherModel? weatherModel) {
+    if (weatherModel == null) return; // Safety check
 
     temp.value = isFahrenheit
-        ? "${forecast.current?.tempF?.round()?.toString() ?? ''}${AppText.fahrenheitDegreeSymbolText}" // Convert to Fahrenheit
-        : "${forecast.current?.tempC?.round()?.toString() ?? ''}${AppText.celsiusDegreeSymbolText}"; // Convert to Celsius
+        ?
+        // Convert to Fahrenheit
+        "${weatherModel.current?.tempF?.round().toString() ?? ''}${AppText.fahrenheitDegreeSymbolText}"
+        :
+        // Convert to Celsius
+        "${weatherModel.current?.tempC?.round().toString() ?? ''}${AppText.celsiusDegreeSymbolText}";
   }
 
+  //Search box function
   void updateCity(BuildContext context) {
     if (searchCityController.text.isEmpty) {
       ErrorMessage.errorMessage(message: 'Please enter a city name');
     } else {
       searchCity.value = searchCityController.text;
-      searchCityController.clear();
-      Navigator.pop(context);
 
       // Fetch weather for the new city and update temperature
       bool isFahrenheit =
           Hive.box('PeopleBox').get('switchValue', defaultValue: false);
-      fetchForeCastWeather(searchCity: searchCity.value).then((forecast) {
-        updateTemperatureUnit(
-            isFahrenheit, forecast); // Update temp with new data
-      });
+      fetchWeather(searchCity: searchCity.value).then(
+        (forecast) {
+          updateTemperatureUnit(
+              isFahrenheit, forecast); // Update temp with new data
+        },
+      );
+
+      searchCityController.clear();
+      Navigator.pop(context);
     }
   }
 
@@ -60,10 +77,9 @@ class DashBoardController extends GetxController {
   ///  Fetch Current Weather data from apis
   ///
   ///
-  Future<ForecastWeatherModel> fetchForeCastWeather(
-      {required String searchCity}) async {
+  Future<WeatherModel> fetchWeather({required String searchCity}) async {
     //Url
-    final String url = "$foreCastWeatherUrl$searchCity&days=7";
+    final String url = "$WeatherUrl$searchCity&days=7";
     try {
       final response = await http.get(
         Uri.parse(url),
@@ -72,14 +88,13 @@ class DashBoardController extends GetxController {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonData = jsonDecode(response.body.toString());
-        ForecastWeatherModel forecastWeatherModel =
-            ForecastWeatherModel.fromJson(jsonData);
+        WeatherModel weatherModel = WeatherModel.fromJson(jsonData);
 
         // Update temperature based on the current switch setting
         bool isFahrenheit =
             Hive.box('PeopleBox').get('switchValue', defaultValue: false);
-        updateTemperatureUnit(isFahrenheit, forecastWeatherModel);
-        return forecastWeatherModel;
+        updateTemperatureUnit(isFahrenheit, weatherModel);
+        return weatherModel;
       } else if (response.statusCode == 400) {
         Map<String, dynamic> errorData = jsonDecode(response.body.toString());
         String errorMessage =
@@ -94,7 +109,12 @@ class DashBoardController extends GetxController {
     }
   }
 
+  ///
+  ///
+  ///
   ///Types of Weather background
+  ///
+  ///
   WeatherType getWeatherBackground(Current? current) {
     String? weatherConditionText = current?.condition?.text?.toLowerCase();
 

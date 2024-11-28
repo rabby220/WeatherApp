@@ -1,40 +1,40 @@
 import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:weather_app/app/utils/appIcon.dart';
 import 'package:weather_app/app/utils/appText.dart';
+
 import 'errorMessage.dart';
 
 class ConnectivityService extends GetxService {
   StreamSubscription? subscription;
 
-  /// Checks connectivity status and shows a message only if no internet.
+  /// Checks connectivity when the app starts.
   Future<void> checkInitialConnectivity() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
-      // Show message only if no internet at startup
-      ErrorMessage.showSnackBarMessage(
-        titleMessage: AppText.noInternetTitleText,
-        subtitleMessage: AppText.noInternetSubtitleText,
-        curves: Curves.elasticInOut,
-        icon: Icon(AppIcon.wifiOffIcon, color: Colors.white),
-      );
+      _showNoInternetMessage(); // Show message only if no internet at startup
     }
+  }
+
+  /// Called when there's no internet
+  void _showNoInternetMessage() {
+    ErrorMessage.showSnackBarMessage(
+      titleMessage: AppText.noInternetTitleText,
+      subtitleMessage: AppText.noInternetSubtitleText,
+      curves: Curves.elasticInOut,
+      icon: Icon(AppIcon.wifiOffIcon, color: Colors.white),
+    );
   }
 
   @override
   void onInit() {
-    // Start listening for connectivity changes (optional)
+    // Listen for connectivity changes
     subscription = Connectivity().onConnectivityChanged.listen((result) {
-      // Show messages only when connectivity status changes
       if (result == ConnectivityResult.none) {
-        ErrorMessage.showSnackBarMessage(
-          titleMessage: AppText.noInternetTitleText,
-          subtitleMessage: AppText.noInternetSubtitleText,
-          curves: Curves.elasticInOut,
-          icon: Icon(AppIcon.wifiOffIcon, color: Colors.white),
-        );
+        _showNoInternetMessage(); // Show message if internet is lost
       }
     });
     super.onInit();
@@ -42,7 +42,7 @@ class ConnectivityService extends GetxService {
 
   @override
   void onClose() {
-    subscription?.cancel();
+    subscription?.cancel(); // Cancel subscription when not needed
     super.onClose();
   }
 }

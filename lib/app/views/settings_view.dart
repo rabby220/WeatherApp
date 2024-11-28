@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:weather_app/app/controllers/dashBoard_controller.dart';
 import 'package:weather_app/app/controllers/settings_controller.dart';
-import 'package:weather_app/app/data/model/forecastWeatherModel.dart';
+import 'package:weather_app/app/data/model/weatherModel.dart';
 
 import '../widgets/switch.dart';
 
@@ -31,7 +31,7 @@ Widget _buildSettings({
     height: MediaQuery.of(context).size.height,
     width: MediaQuery.of(context).size.width,
     child: Padding(
-      padding: EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(15.0),
       child: ListView(
         children: [
           ///Dark Mode Switch
@@ -66,18 +66,19 @@ Widget _buildSettings({
 
                     DashBoardController controller =
                         Get.find<DashBoardController>(); // Get controller
-                    ForecastWeatherModel forecast =
+                    WeatherModel weatherModel =
                         Get.arguments; // Pass forecast data
 
                     controller.updateTemperatureUnit(
-                        value, forecast); // Update temp
+                        value, weatherModel); // Update temp
                   },
                 );
               },
             ),
           ),
 
-          _buildListTileWidget(text: 'App Version', trailing: Text("1.0")),
+          _buildListTileWidget(
+              text: 'App Version', trailing: const Text("1.0")),
         ],
       ),
     ),

@@ -13,13 +13,12 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox('PeopleBox');
 
-  // Initialize the ConnectivityService before running the app
-  //await Get.putAsync(() async => ConnectivityService());
+  // Initialize the ConnectivityService and check connectivity on startup
+  await Get.putAsync(() async => ConnectivityService());
 
   // Initialize the ConnectivityService and check connectivity on startup
   ConnectivityService connectivityService = Get.put(ConnectivityService());
   await connectivityService.checkInitialConnectivity();
-
   runApp(
     ValueListenableBuilder(
       valueListenable: Hive.box('PeopleBox').listenable(),
